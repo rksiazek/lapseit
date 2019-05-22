@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import * as FFMpeg from "fluent-ffmpeg";
-import { TimelapseJobEntity } from "./timelapse-job-entity";
-import { Job } from "bull";
-import { StreamedHttpResourceProvider } from "../services/streamed-http-resource-provider";
-import { StreamedFsResourceProvider } from "../services/streamed-fs-resource-provider";
+import * as FFMpeg from 'fluent-ffmpeg';
+import { TimelapseJobEntity } from './timelapse-job-entity';
+import { Job } from 'bull';
+import { StreamedHttpResourceProvider } from '../services/streamed-http-resource-provider';
+import { StreamedFsResourceProvider } from '../services/streamed-fs-resource-provider';
 
 @Injectable()
 export class TimelapseJobService {
@@ -12,11 +12,11 @@ export class TimelapseJobService {
 
   streamedConversion(job: Job<TimelapseJobEntity>,
                      onCompleteCb: (error: Error, resultData: any) => void,
-                     onProgressCb?: (job: Job<TimelapseJobEntity>, percentageProgress: number) => void) : void {
+                     onProgressCb?: (job: Job<TimelapseJobEntity>, percentageProgress: number) => void): void {
 
     // todo: move that to config file
-    const OUTPUT_DEST : string = "processed_resources/";
-    const outputFilename = job.id+".mp4";
+    const OUTPUT_DEST: string = 'processed_resources/';
+    const outputFilename = job.id + '.mp4';
 
     const videoConverterApi = FFMpeg();
 
@@ -29,23 +29,21 @@ export class TimelapseJobService {
       .outputFormat('mp4')
       .output(this.streamedFsResourcesProvider.saveResourcesPipe(OUTPUT_DEST + outputFilename))
       .videoCodec('libx264')
-      .addOutputOption("-pix_fmt yuv420p")
+      .addOutputOption('-pix_fmt yuv420p')
       .addOutputOption('-movflags frag_keyframe+empty_moov')
       .outputFps(30)
       .noAudio()
       .on('end', () => {
-        console.log("end");
-        onCompleteCb(null, outputFilename)
+        onCompleteCb(null, outputFilename);
       })
-      .on('progress', (progress : any) =>
-        onProgressCb(job, 100*progress.frames/job.data.frameSources.length)
+      .on('progress', (progress: any) =>
+        onProgressCb(job, 100 * progress.frames / job.data.frameSources.length),
       )
       .on('error', (err: string) => {
-        console.log("error: " + err);
         onCompleteCb(
-            new Error('Failed do pull remote resources: ' + err), null
-        )
-        }
+            new Error('Failed do pull remote resources: ' + err), null,
+        );
+        },
       )
       .run();
   }

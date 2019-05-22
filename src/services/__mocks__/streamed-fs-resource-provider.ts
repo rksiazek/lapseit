@@ -1,13 +1,11 @@
-import { StreamedResourceProvider } from "../../interfaces/streamed-resource-provider";
-import { PassThrough, Writable } from "stream";
-import { Injectable } from "@nestjs/common";
+import { StreamedResourceProvider } from '../../interfaces/streamed-resource-provider';
+import { PassThrough, Writable } from 'stream';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class StreamedFsResourceProvider implements StreamedResourceProvider {
-  constructor() {}
-
-  pullResourcesPipe(resources: string[]) : PassThrough {
-    let stream: PassThrough = new PassThrough();
+  pullResourcesPipe(resources: string[]): PassThrough {
+    const stream: PassThrough = new PassThrough();
 
     resources.forEach((value: string) => stream.push(value));
     stream.push(null);

@@ -7,10 +7,10 @@ import {
   Body,
   HttpException,
   HttpStatus,
-  Headers, Res
+  Headers, Res,
 } from '@nestjs/common';
-import { TimelapseRequestTemplate} from "./timelapse.dto";
-import {TimelapseService} from "./timelapse.service";
+import { TimelapseRequestTemplate} from './timelapse-request.dto';
+import {TimelapseService} from './timelapse.service';
 
 @Controller('timelapse')
 export class TimelapseController {
@@ -21,11 +21,10 @@ export class TimelapseController {
     try {
       response.send(await this.timelapseService.createTimelapseProcessingJob(requestBody, hostHeader));
       return response.status(HttpStatus.CREATED);
-    }
-    catch (e) {
+    } catch (e) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'Could not create the job.'
+        error: 'Could not create the job.',
       }, HttpStatus.BAD_REQUEST);
     }
   }
@@ -34,25 +33,25 @@ export class TimelapseController {
   async getJob( @Param('jobId', new ParseIntPipe()) jobId: number, @Headers('host') hostHeader, @Res() response) {
     try {
       response.send(await this.timelapseService.getTimelapseJobById(jobId));
-      response.status(200)
+      response.status(200);
     } catch (e) {
       response.send(new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'A job with supplied ID were not found.'
+        error: 'A job with supplied ID were not found.',
       }, 404));
     }
   }
 
   @Get(':resourceName')
   async sendProcessedResource(@Param('resourceName') resourceName: string, @Res() response) {
-    let timelapseJobId: number = parseInt(resourceName.slice(0, resourceName.indexOf('.')));
+    const timelapseJobId: number = parseInt(resourceName.slice(0, resourceName.indexOf('.')), 10);
 
     try {
       response.type('video/mp4').send(this.timelapseService.getTimelapseStream(timelapseJobId));
     } catch (e) {
         response.send(new HttpException({
           status: HttpStatus.NOT_FOUND,
-          error: 'A timelapse with supplied identifier were not found.'
+          error: 'A timelapse with supplied identifier were not found.',
         }, 404));
     }
   }

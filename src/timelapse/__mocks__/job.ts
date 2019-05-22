@@ -1,4 +1,4 @@
-import * as Bull from "bull";
+import * as Bull from 'bull';
 
 export class MyJob<T> implements Bull.Job {
   attemptsMade: number;
@@ -12,7 +12,7 @@ export class MyJob<T> implements Bull.Job {
   returnvalue: any;
   stacktrace: string[];
   timestamp: number;
-  _progress: number;
+  progressPerc: number;
 
   constructor(data: T) {
     this.data = data;
@@ -29,11 +29,11 @@ export class MyJob<T> implements Bull.Job {
   getState(): Promise<Bull.JobStatus> {
     return new Promise<Bull.JobStatus>(resolve => {
     resolve('waiting');
-  })
+  });
   }
 
   lockKey(): string {
-    return "";
+    return '';
   }
 
   moveToCompleted(returnValue?: string, ignoreLock?: boolean): Promise<[any, Bull.JobId] | null> {
@@ -45,7 +45,7 @@ export class MyJob<T> implements Bull.Job {
   }
 
   progress(value: any): Promise<void> {
-    return new Promise<void>(() => {this._progress = value});
+    return new Promise<void>(() => {this.progressPerc = value; });
   }
 
   promote(): Promise<void> {
@@ -68,7 +68,21 @@ export class MyJob<T> implements Bull.Job {
     return undefined;
   }
 
-  toJSON(): { id: Bull.JobId; name: string; data: T; opts: Bull.JobOptions; progress: number; delay: number; timestamp: number; attemptsMade: number; failedReason: any; stacktrace: string[] | null; returnvalue: any; finishedOn: number | null; processedOn: number | null } {
+  toJSON(): {
+    id: Bull.JobId;
+    name: string;
+    data: T;
+    opts: Bull.JobOptions;
+    progress: number;
+    delay: number;
+    timestamp: number;
+    attemptsMade: number;
+    failedReason: any;
+    stacktrace: string[] | null;
+    returnvalue: any;
+    finishedOn: number | null;
+    processedOn: number | null
+  } {
     return {
       attemptsMade: this.attemptsMade,
       data: this.data,
@@ -79,10 +93,10 @@ export class MyJob<T> implements Bull.Job {
       name: this.name,
       opts: this.opts,
       processedOn: this.processedOn,
-      progress: this._progress,
+      progress: this.progressPerc,
       returnvalue: this.returnvalue,
       stacktrace: this.stacktrace,
-      timestamp: this.timestamp
+      timestamp: this.timestamp,
     };
   }
 
@@ -90,6 +104,6 @@ export class MyJob<T> implements Bull.Job {
     return new Promise<void>(resolve => {
       this.data = data;
       resolve();
-    })
+    });
   }
 }

@@ -8,11 +8,11 @@ import { TimelapseModule } from './timelapse/timelapse.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     TimelapseModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
 
   app.useStaticAssets({
-    root: __dirname + "/processed_resources"
+    root: __dirname + '/processed_resources',
   });
 
   await app.listen(3000);

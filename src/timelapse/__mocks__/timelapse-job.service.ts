@@ -1,5 +1,5 @@
-import { TimelapseJobEntity } from "../timelapse-job-entity";
-import * as Bull from "bull";
+import { TimelapseJobEntity } from '../timelapse-job-entity';
+import * as Bull from 'bull';
 
 export class TimelapseJobService {
   streamedConversion(job: Bull.Job<TimelapseJobEntity>,

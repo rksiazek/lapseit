@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimelapseService } from './timelapse.service';
-import { QueueService } from "./queue.service";
-import { MyJob as Job } from "./__mocks__/job";
-import { TimelapseRequestTemplate, TimelapseResponseTemplate } from "./timelapse.dto";
-import { JobStatus } from "bull";
-import * as Sinon from "sinon";
-import * as fs from "fs";
-import {PathLike} from "fs";
-import { ReadStream } from 'fs'
-import * as StreamTest from 'streamtest'
-import {PassThrough,} from "stream";
+import { QueueService } from './queue.service';
+import { MyJob as Job } from './__mocks__/job';
+import { TimelapseRequestTemplate } from './timelapse-request.dto';
+import { TimelapseResponseTemplate } from './timelapse-response.dto';
+import { JobStatus } from 'bull';
+import * as Sinon from 'sinon';
+import * as fs from 'fs';
+import {PathLike} from 'fs';
+import { ReadStream } from 'fs';
+import {PassThrough} from 'stream';
 
 jest.mock('./queue.service');
 jest.mock('../services/streamed-http-resource-provider');
@@ -32,40 +32,40 @@ describe('TimelapseService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createTimelapseProcessingJob', function () {
+  describe('createTimelapseProcessingJob', () => {
     it('should parse valid, requested timelapse job`s data, call underlying queue service method and return result object',
       async (done) => {
-        let job: Job<any> = new Job<any>([]);
-        let request: TimelapseRequestTemplate = {
-          frame_sources: ['test1', 'test2']
+        const job: Job<any> = new Job<any>([]);
+        const request: TimelapseRequestTemplate = {
+          frameSources: ['test1', 'test2'],
         };
 
-        let testJobId: number = 555;
-        let testHostHeader: string = 'test.test';
+        const testJobId: number = 555;
+        const testHostHeader: string = 'test.test';
 
-        let expectedResult: TimelapseResponseTemplate = {
+        const expectedResult: TimelapseResponseTemplate = {
           status: 'waiting',
-          started_on: 123123123,
-          finished_on: 321321321,
-          status_pool_link: 'http://' + testHostHeader + '/timelapse/status/' + testJobId,
-          output_resource_url: 'http://' + testHostHeader + '/timelapse/' + testJobId + '.mp4'
+          startedOn: 123123123,
+          finishedOn: 321321321,
+          statusPoolLink: 'http://' + testHostHeader + '/timelapse/status/' + testJobId,
+          outputResourceUrl: 'http://' + testHostHeader + '/timelapse/' + testJobId + '.mp4',
         };
 
         Sinon.stub(queueService, 'addJob')
           .callsFake((jobData: any) => new Promise(resolve => {
-            expect(jobData).toHaveProperty('frameSources', request.frame_sources);
+            expect(jobData).toHaveProperty('frameSources', request.frameSources);
 
-            job.processedOn = expectedResult.started_on;
-            job.finishedOn = expectedResult.finished_on;
+            job.processedOn = expectedResult.startedOn;
+            job.finishedOn = expectedResult.finishedOn;
             job.id = testJobId;
 
             resolve(job);
           }));
 
-        Sinon.stub(job, 'getState').returns(new Promise(resolve => resolve(<JobStatus>expectedResult.status)));
+        Sinon.stub(job, 'getState').returns(new Promise(resolve => resolve(expectedResult.status as JobStatus)));
 
-        let spyOnResolve = jest.fn();
-        let spyOnReject = jest.fn();
+        const spyOnResolve = jest.fn();
+        const spyOnReject = jest.fn();
 
         await new Promise((resolve) => {
           service.createTimelapseProcessingJob(request, testHostHeader)
@@ -85,22 +85,22 @@ describe('TimelapseService', () => {
 
             done();
           });
-      })
+      });
   });
 
-  describe('getTimelapseJobById', function () {
+  describe('getTimelapseJobById', () => {
     it('should return the job with provided ID',
       async (done) => {
-        let job: Job<any> = new Job<any>([]);
+        const job: Job<any> = new Job<any>([]);
 
-        let testJobId: number = 555;
+        const testJobId: number = 555;
 
-        let expectedResult: TimelapseResponseTemplate = {
+        const expectedResult: TimelapseResponseTemplate = {
           status: 'waiting',
-          started_on: 123123123,
-          finished_on: 321321321,
-          status_pool_link: 'http://test.test/timelapse/status/' + testJobId,
-          output_resource_url: 'http://test.test/timelapse/' + testJobId + '.mp4'
+          startedOn: 123123123,
+          finishedOn: 321321321,
+          statusPoolLink: 'http://test.test/timelapse/status/' + testJobId,
+          outputResourceUrl: 'http://test.test/timelapse/' + testJobId + '.mp4',
         };
 
         Sinon.stub(queueService, 'getJob')
@@ -109,20 +109,20 @@ describe('TimelapseService', () => {
             expect(jobId).toBeGreaterThanOrEqual(0);
 
             job.id = testJobId;
-            job.processedOn = expectedResult.started_on;
-            job.finishedOn = expectedResult.finished_on;
+            job.processedOn = expectedResult.startedOn;
+            job.finishedOn = expectedResult.finishedOn;
             job.data = {
-              statusPoolLink: expectedResult.status_pool_link,
-              outputResourceUrl: expectedResult.output_resource_url
+              statusPoolLink: expectedResult.statusPoolLink,
+              outputResourceUrl: expectedResult.outputResourceUrl,
             };
 
             resolve(job);
           }));
 
-        Sinon.stub(job, 'getState').returns(new Promise(resolve => resolve(<JobStatus>expectedResult.status)));
+        Sinon.stub(job, 'getState').returns(new Promise(resolve => resolve(expectedResult.status as JobStatus)));
 
-        let spyOnResolve = jest.fn();
-        let spyOnReject = jest.fn();
+        const spyOnResolve = jest.fn();
+        const spyOnReject = jest.fn();
 
         await new Promise((resolve) => {
           service.getTimelapseJobById(testJobId)
@@ -142,12 +142,12 @@ describe('TimelapseService', () => {
 
             done();
           });
-      })
+      });
   });
 
-  describe('getTimelapseStream', function () {
+  describe('getTimelapseStream', () => {
     it('should return video stream containing timelapse with provided, valid ID', async (done) => {
-      let testJobId = 555;
+      const testJobId = 555;
 
       Sinon.stub(fs, 'existsSync').callsFake((path: PathLike) => {
         expect(path).toContain(testJobId + '.mp4');
@@ -164,21 +164,21 @@ describe('TimelapseService', () => {
             start?: number;
             end?: number;
             highWaterMark?: number;
-          }
+          },
         ) => {
-          let readStream: PassThrough = new PassThrough();
+          const readStream: PassThrough = new PassThrough();
           readStream.push('test1');
 
-          return <ReadStream><unknown>readStream;
+          return readStream as unknown as ReadStream;
       });
 
-      let testStream: PassThrough = new PassThrough();
+      const testStream: PassThrough = new PassThrough();
       testStream.on('data', (chunk) => {
         expect(chunk.toString()).toEqual('test1');
         done();
       });
 
       service.getTimelapseStream(testJobId).pipe(testStream);
-    })
+    });
   });
 });

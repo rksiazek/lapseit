@@ -1,21 +1,21 @@
 import {
     Queue,
-    QueueProcess
+    QueueProcess,
 } from 'nest-bull';
-import { TimelapseJobService} from "./timelapse-job.service";
+import { TimelapseJobService} from './timelapse-job.service';
 import { Job, DoneCallback } from 'bull';
-import { TimelapseJobEntity } from "./timelapse-job-entity";
+import { TimelapseJobEntity } from './timelapse-job-entity';
 
 @Queue()
 export class TimelapseJobsQueueService {
     constructor(private readonly service: TimelapseJobService) {}
 
     @QueueProcess({ name: 'generate-timelapse' })
-    processTimelapse(job: Job<TimelapseJobEntity>, doneCb: DoneCallback) {
+    processTimelapse(job: Job<TimelapseJobEntity>, doneCb: DoneCallback): void {
         this.service.streamedConversion(job, doneCb, this.onProgress);
     }
 
-    onProgress(job: Job<TimelapseJobEntity>, percentageProgress: number) {
+    onProgress(job: Job<TimelapseJobEntity>, percentageProgress: number): void {
         job.progress(percentageProgress).then();
     }
 }

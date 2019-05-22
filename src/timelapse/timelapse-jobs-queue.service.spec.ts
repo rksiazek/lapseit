@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimelapseJobsQueueService } from './timelapse-jobs-queue.service';
-import { TimelapseJobService } from "./timelapse-job.service";
-import { MyJob as Job } from "./__mocks__/job";
-import { TimelapseJobEntity } from "./timelapse-job-entity";
+import { TimelapseJobService } from './timelapse-job.service';
+import { MyJob as Job } from './__mocks__/job';
+import { TimelapseJobEntity } from './timelapse-job-entity';
 
 jest.mock('./timelapse-job.service');
 
@@ -24,10 +24,10 @@ describe('TimelapseJobsQueueService', () => {
   });
 
   test('should handle job`s done/error and progress events', (done: () => void) => {
-    let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(null);
+    const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(null);
 
     const onCompleteCb = jest.fn();
-    let spyOnProgress = jest.spyOn(service, 'onProgress');
+    const spyOnProgress = jest.spyOn(service, 'onProgress');
     service.processTimelapse(job, onCompleteCb);
 
     setTimeout(() => {
@@ -37,12 +37,12 @@ describe('TimelapseJobsQueueService', () => {
       expect(onCompleteCb).toHaveBeenCalledWith(new Error('error'), 'success');
 
       done();
-    }, 200)
+    }, 200);
   });
 
   describe('onProgress', () => {
     test('should update job`s progress', (done: () => void) => {
-      let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(null);
+      const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(null);
       const onCompleteCb = jest.fn();
 
       jobService.streamedConversion(job, onCompleteCb, service.onProgress);

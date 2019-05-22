@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TimelapseController } from "./timelapse.controller";
-import { TimelapseService } from "./timelapse.service";
+import { TimelapseController } from './timelapse.controller';
+import { TimelapseService } from './timelapse.service';
 
 jest.mock('./timelapse.service');
 
@@ -11,7 +11,7 @@ describe('Timelapse Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ TimelapseController ],
-      providers: [ TimelapseService ]
+      providers: [ TimelapseService ],
     }).compile();
 
     controller = module.get<TimelapseController>(TimelapseController);
@@ -25,18 +25,18 @@ describe('Timelapse Controller', () => {
   describe('createTimelapseGenerationJob', () => {
     it('should return object containing enqueued job data with pool endpoint address', () => {
       // todo
-    })
+    });
   });
 
   describe('getJob', () => {
     it('should return a data of job with specified id', () => {
       // todo
-    })
+    });
   });
 
   describe('sendProcessedResource', () => {
     it('should return stream of requested resource', () => {
       // todo
-    })
+    });
   });
 });

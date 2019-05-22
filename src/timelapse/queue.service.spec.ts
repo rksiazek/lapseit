@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QueueService } from './queue.service';
-import {BullModule, getQueueToken} from "nest-bull";
+import {BullModule, getQueueToken} from 'nest-bull';
 import * as Sinon from 'sinon';
-import {MyJob as Job} from "./__mocks__/job";
-import {Queue} from "bull";
+import {MyJob as Job} from './__mocks__/job';
+import {Queue} from 'bull';
 
 describe('QueueService', () => {
   let service: QueueService;
@@ -12,7 +12,7 @@ describe('QueueService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        BullModule.forRoot({})
+        BullModule.forRoot({}),
       ],
       providers: [QueueService],
     }).compile();
@@ -30,21 +30,21 @@ describe('QueueService', () => {
       Sinon.stub(queue, 'add')
         .callsFake((jobData: any) =>
           new Promise(resolve => {
-            let job: Job<any> = new Job<any>(jobData);
+            const job: Job<any> = new Job<any>(jobData);
             job.id = 23;
             resolve(job);
-          })
+          }),
         );
 
       await service.addJob({test: 'test'}).then((job: Job<any>) => {
         expect(job.id).toBe(23);
-      })
+      });
     });
   });
 
   describe('getJob', () => {
     it('should return Job with specified id', async () => {
-      let testJob: Job<any> = new Job<any>(null);
+      const testJob: Job<any> = new Job<any>(null);
       testJob.id = 24;
 
       Sinon.stub(queue, 'getJob')
@@ -55,12 +55,12 @@ describe('QueueService', () => {
             } else {
               reject('Job not found');
             }
-          })
+          }),
         );
 
       await service.getJob(24).then((job) => {
         expect(job).toBe(testJob);
-      })
-    })
+      });
+    });
   });
 });

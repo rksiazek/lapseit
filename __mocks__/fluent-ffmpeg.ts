@@ -1,12 +1,12 @@
-import { Readable, Writable } from "stream";
-import { EventEmitter } from "events";
+import { Readable, Writable } from 'stream';
+import { EventEmitter } from 'events';
 
 export class FfmpegCommand extends EventEmitter {
-  _input: string | Readable;
-  _output: string | Writable;
+  inputSrc: string | Readable;
+  outputDst: string | Writable;
 
   input(source: string | Readable): this {
-    this._input = source;
+    this.inputSrc = source;
     return this;
   }
 
@@ -28,7 +28,7 @@ export class FfmpegCommand extends EventEmitter {
   }
 
   output(target: string | Writable, pipeopts?: { end?: boolean }): this {
-    this._output = target;
+    this.outputDst = target;
     return this;
   }
 
@@ -43,9 +43,9 @@ export class FfmpegCommand extends EventEmitter {
   outputOption(...options: string[]): this {
     return this;
   }
-  
+
   run(): void {
-    (<Readable>this._input).pipe(<Writable>this._output);
+    (this.inputSrc as Readable).pipe(this.outputDst as Writable);
   }
 
   videoCodec(codec: string): this {

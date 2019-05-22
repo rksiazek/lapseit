@@ -1,6 +1,6 @@
-import {PassThrough, Writable} from "stream"
+import {PassThrough, Writable} from 'stream';
 
 export interface StreamedResourceProvider {
-  pullResourcesPipe(resources: string[]) : PassThrough;
+  pullResourcesPipe(resources: string[]): PassThrough;
   saveResourcesPipe(destination: string): Writable;
 }

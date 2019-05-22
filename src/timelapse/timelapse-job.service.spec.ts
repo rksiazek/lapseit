@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MyJob as Job } from "./__mocks__/job";
-import { TimelapseJobEntity } from "./timelapse-job-entity";
-import { TimelapseJobService } from "./timelapse-job.service";
-import { StreamedResourceProvider } from "../interfaces/streamed-resource-provider";
-import { StreamedHttpResourceProvider } from "../services/streamed-http-resource-provider";
-import { StreamedFsResourceProvider } from "../services/streamed-fs-resource-provider";
-import * as FFMpeg from "fluent-ffmpeg";
-import * as Sinon from 'sinon'
+import { MyJob as Job } from './__mocks__/job';
+import { TimelapseJobEntity } from './timelapse-job-entity';
+import { TimelapseJobService } from './timelapse-job.service';
+import { StreamedResourceProvider } from '../interfaces/streamed-resource-provider';
+import { StreamedHttpResourceProvider } from '../services/streamed-http-resource-provider';
+import { StreamedFsResourceProvider } from '../services/streamed-fs-resource-provider';
+import * as FFMpeg from 'fluent-ffmpeg';
+import * as Sinon from 'sinon';
 
 jest.mock('../services/streamed-http-resource-provider');
 jest.mock('../services/streamed-fs-resource-provider');
 
 describe('TimelapseJobService', () => {
-  let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));
+  const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));
   let service: TimelapseJobService;
   let streamedHttpResourceProvider: StreamedHttpResourceProvider;
   let streamedFsResourceProvider: StreamedFsResourceProvider;
@@ -43,15 +43,13 @@ describe('TimelapseJobService', () => {
         onCompleteCb.mockImplementation(() => {
           expect(onCompleteCb).toHaveBeenCalledTimes(1);
           expect(onCompleteCb).toHaveBeenCalledWith(null, job.id + '.mp4');
-        })
+        });
       });
 
     it('should call the provided done callback with a Error as the result arg, after the failed processing',
       () => {
-        let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));
-
-        Sinon.stub(FFMpeg(), 'run').callsFake(() => {
-          FFMpeg().emit('error', [new Error('testError'), null])
+        Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
+          FFMpeg().emit('error', [new Error('testError'), null]);
         });
 
         const onCompleteCb = jest.fn();
@@ -61,14 +59,12 @@ describe('TimelapseJobService', () => {
         onCompleteCb.mockImplementation(() => {
           expect(onCompleteCb).toHaveBeenCalledTimes(1);
           expect(onCompleteCb).toHaveBeenCalledWith(new Error('testError'), null);
-        })
+        });
       });
 
     it('should call the provided progress callback with progress percentage as the arg, during the processing',
       () => {
-        let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));
-
-        Sinon.stub(FFMpeg(), 'run').callsFake(() => {
+        Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
           FFMpeg().emit('progress', [77]);
         });
 
@@ -79,7 +75,7 @@ describe('TimelapseJobService', () => {
         onProgressCb.mockImplementation(() => {
           expect(onProgressCb).toHaveBeenCalledTimes(1);
           expect(onProgressCb).toHaveBeenCalledWith(77);
-        })
+        });
       });
 
     /*it('should take the input and pipe it into the output',

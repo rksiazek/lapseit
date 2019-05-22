@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { QueueService } from "./queue.service";
-import { TimelapseRequestTemplate, TimelapseResponseTemplate } from "./timelapse.dto";
-import { TimelapseJobEntity } from "./timelapse-job-entity";
-import { Job, JobStatus } from "bull";
-import * as fs from "fs";
-import { Readable } from "stream";
+import { QueueService } from './queue.service';
+import { TimelapseRequestTemplate } from './timelapse-request.dto';
+import { TimelapseResponseTemplate } from './timelapse-response.dto';
+import { TimelapseJobEntity } from './timelapse-job-entity';
+import { Job, JobStatus } from 'bull';
+import * as fs from 'fs';
+import { Readable } from 'stream';
 
 @Injectable()
 export class TimelapseService {
@@ -13,16 +14,16 @@ export class TimelapseService {
   async createTimelapseProcessingJob(timelapseJobRequest: TimelapseRequestTemplate, moduleBaseEndpoint: string):
     Promise<TimelapseResponseTemplate> {
       return new Promise<TimelapseResponseTemplate>(async (resolve, reject) => {
-        let timelapseJobDataObject: TimelapseJobEntity = new TimelapseJobEntity(timelapseJobRequest.frame_sources);
+        const timelapseJobDataObject: TimelapseJobEntity = new TimelapseJobEntity(timelapseJobRequest.frameSources);
 
-        let enqueuedJob: Job<TimelapseJobEntity> = await this
+        const enqueuedJob: Job<TimelapseJobEntity> = await this
           .queueService
           .addJob(timelapseJobDataObject)
           .then(
-          (job: Job<TimelapseJobEntity>) => job
+          (job: Job<TimelapseJobEntity>) => job,
         );
 
-        if(enqueuedJob === null) {
+        if (enqueuedJob === null) {
           reject('Could not create the job');
         }
 
@@ -30,45 +31,45 @@ export class TimelapseService {
         timelapseJobDataObject.outputResourceUrl = 'http://' + moduleBaseEndpoint + '/timelapse/' + enqueuedJob.id + '.mp4';
         await enqueuedJob.update(timelapseJobDataObject);
 
-        resolve(<TimelapseResponseTemplate>{
+        resolve({
           status: await enqueuedJob.getState().then((status: JobStatus) => status),
-          started_on: enqueuedJob.processedOn,
-          finished_on: enqueuedJob.finishedOn,
-          status_pool_link: timelapseJobDataObject.statusPoolLink,
-          output_resource_url: timelapseJobDataObject.outputResourceUrl
-        });
-      })
+          startedOn: enqueuedJob.processedOn,
+          finishedOn: enqueuedJob.finishedOn,
+          statusPoolLink: timelapseJobDataObject.statusPoolLink,
+          outputResourceUrl: timelapseJobDataObject.outputResourceUrl,
+        } as TimelapseResponseTemplate);
+      });
   }
 
   async getTimelapseJobById(jobId: number): Promise<TimelapseResponseTemplate> {
     return new Promise<TimelapseResponseTemplate>(async (resolve, reject) => {
-      let job: Job<TimelapseJobEntity> = await this
+      const job: Job<TimelapseJobEntity> = await this
         .queueService
         .getJob(jobId)
-        .then((job: Job<TimelapseJobEntity>) => job);
-      let jobState: string = await job.getState().then((jobState: JobStatus) => jobState);
-      let jobSerialized = job.toJSON();
+        .then((foundJob: Job<TimelapseJobEntity>) => foundJob);
+      const jobState: string = await job.getState().then((jobStatus: JobStatus) => jobStatus);
+      const jobSerialized = job.toJSON();
 
-      if(job == null) {
+      if (job.id == null) {
         reject('A job with specified ID does not exist');
       }
 
-      resolve(<TimelapseResponseTemplate>{
+      resolve({
         status: jobState,
         progress: jobSerialized.progress,
-        started_on: jobSerialized.processedOn,
-        finished_on: jobSerialized.finishedOn,
-        status_pool_link: jobSerialized.data.statusPoolLink,
-        output_resource_url: jobSerialized.data.outputResourceUrl
-      })
-    })
+        startedOn: jobSerialized.processedOn,
+        finishedOn: jobSerialized.finishedOn,
+        statusPoolLink: jobSerialized.data.statusPoolLink,
+        outputResourceUrl: jobSerialized.data.outputResourceUrl,
+      } as TimelapseResponseTemplate);
+    });
   }
 
   getTimelapseStream(jobId: number): Readable {
-    let resourcePath: string = 'processed_resources/' + jobId + '.mp4';
+    const resourcePath: string = 'processed_resources/' + jobId + '.mp4';
 
-    if(fs.existsSync(resourcePath) === false) {
-      console.log(new Error('NOT_FOUND'));
+    if (fs.existsSync(resourcePath) === false) {
+      throw new Error('NOT_FOUND');
     }
 
     return fs.createReadStream(resourcePath);
