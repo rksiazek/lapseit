@@ -13,13 +13,15 @@ export class TimelapseJobService {
 
   streamedConversion(job: Job<TimelapseJobEntity>,
                      onCompleteCb: (error: Error, resultData: any) => void,
-                     onProgressCb?: (job: Job<TimelapseJobEntity>, percentageProgress: number) => void): void {
+                     onProgressCb?: (job: Job<TimelapseJobEntity>, percentageProgress: number) => void,
+                     videoConverterApi?: FFMpeg.FfmpegCommand): void {
 
     // todo: move that to config file
     const OUTPUT_DEST: string = 'processed_resources/';
     const outputFilename = job.id + '.mp4';
 
-    const videoConverterApi = FFMpeg().setFfmpegPath(FFMpegInstaller.path);
+    videoConverterApi = videoConverterApi || FFMpeg();
+    videoConverterApi.setFfmpegPath(FFMpegInstaller.path);
 
     // todo: test whether pipe's nested event emitting affects conversion progress
     // todo: make converter`s options customizable via POST request
@@ -42,7 +44,7 @@ export class TimelapseJobService {
       )
       .on('error', (err: string) => {
         onCompleteCb(
-            new Error('Failed do pull remote resources: ' + err), null,
+            new Error(err), null,
         );
         },
       )

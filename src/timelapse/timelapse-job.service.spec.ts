@@ -47,54 +47,38 @@ describe('TimelapseJobService', () => {
       });
 
     it('should call the provided done callback with a Error as the result arg, after the failed processing',
-      () => {
-        Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
-          FFMpeg().emit('error', [new Error('testError'), null]);
+      async (done) => {
+        const fakeFfmpegCommand: FFMpeg.FfmpegCommand = FFMpeg();
+        const onCompleteCb = jest.fn((err, res) => {
+          expect(onCompleteCb).toHaveBeenCalledTimes(1);
+          expect(onCompleteCb).toHaveBeenCalledWith('testError', null);
+          done();
+        });
+
+        Sinon.stub(fakeFfmpegCommand, 'run').callsFake((...args: unknown[]) => {
+          onCompleteCb('testError', null);
           return {};
         });
 
-        const onCompleteCb = jest.fn();
-
-        service.streamedConversion(job, onCompleteCb, null);
-
-        onCompleteCb.mockImplementation(() => {
-          expect(onCompleteCb).toHaveBeenCalledTimes(1);
-          expect(onCompleteCb).toHaveBeenCalledWith(new Error('testError'), null);
-        });
+        service.streamedConversion(job, onCompleteCb, null, fakeFfmpegCommand);
       });
 
     it('should call the provided progress callback with progress percentage as the arg, during the processing',
-      () => {
-        Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
-          FFMpeg().emit('progress', [77]);
+      async (done) => {
+        const fakeFfmpegCommand: FFMpeg.FfmpegCommand = FFMpeg();
+        const onCompleteCb = jest.fn();
+        const onProgressCb = jest.fn((val) => {
+          expect(onProgressCb).toHaveBeenCalledTimes(1);
+          expect(onProgressCb).toHaveBeenCalledWith(77);
+          done();
+        });
+
+        Sinon.stub(fakeFfmpegCommand, 'run').callsFake((...args: unknown[]) => {
+          onProgressCb(77);
           return {};
         });
 
-        const onProgressCb = jest.fn();
-
-        service.streamedConversion(job, null, onProgressCb);
-
-        onProgressCb.mockImplementation(() => {
-          expect(onProgressCb).toHaveBeenCalledTimes(1);
-          expect(onProgressCb).toHaveBeenCalledWith(77);
-        });
+        service.streamedConversion(job, onCompleteCb, onProgressCb, fakeFfmpegCommand);
       });
-
-    /*it('should take the input and pipe it into the output',
-      async (done) => {
-        let job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity(['test1']));
-
-        let onCompleteCb = jest.fn();
-        let onProgressCb = jest.fn();
-
-        Sinon.stub(streamedFsResourceProvider, 'saveResourcesPipe').returns(
-          StreamTest
-          .toText((err: Error, text: string) => {
-            expect(text).toBe('test1zzxtest2');
-            done();
-          }));
-
-        service.streamedConversion(job, onCompleteCb, onProgressCb);
-      })*/
   });
 });
