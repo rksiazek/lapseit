@@ -46,7 +46,11 @@ export class TimelapseService {
       const job: Job<TimelapseJobEntity> = await this
         .queueService
         .getJob(jobId)
-        .then((foundJob: Job<TimelapseJobEntity>) => foundJob);
+        .then((foundJob: Job<TimelapseJobEntity>) => foundJob,
+          reason => {
+            reject(reason);
+            return null;
+          });
       const jobState: string = await job.getState().then((jobStatus: JobStatus) => jobStatus);
       const jobSerialized = job.toJSON();
 

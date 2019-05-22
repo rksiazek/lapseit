@@ -18,28 +18,34 @@ export class TimelapseController {
 
   @Post()
   async createTimelapseGenerationJob(@Body() requestBody: TimelapseRequestTemplate, @Headers('host') hostHeader: string, @Res() response) {
-    try {
-      response.send(await this.timelapseService.createTimelapseProcessingJob(requestBody, hostHeader));
-      return response.status(HttpStatus.CREATED);
-    } catch (e) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Could not create the job.',
-      }, HttpStatus.BAD_REQUEST);
-    }
+    response.send(await this
+      .timelapseService
+      .createTimelapseProcessingJob(requestBody, hostHeader)
+      .catch(reason => {
+        throw new HttpException({
+          status: HttpStatus.NOT_FOUND,
+          error: 'Could not create the job.',
+        }, HttpStatus.BAD_REQUEST);
+      }),
+    );
+
+    return response.status(HttpStatus.CREATED);
   }
 
   @Get('status/:jobId')
   async getJob( @Param('jobId', new ParseIntPipe()) jobId: number, @Headers('host') hostHeader, @Res() response) {
-    try {
-      response.send(await this.timelapseService.getTimelapseJobById(jobId));
-      response.status(200);
-    } catch (e) {
-      response.send(new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'A job with supplied ID were not found.',
-      }, 404));
-    }
+    response.send(await this
+      .timelapseService
+      .getTimelapseJobById(jobId)
+      .catch(reason => {
+        response.send(new HttpException({
+          status: HttpStatus.NOT_FOUND,
+          error: 'A job with supplied ID were not found.',
+        }, 404));
+      }),
+    );
+
+    return response.status(200);
   }
 
   @Get(':resourceName')

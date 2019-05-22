@@ -21,7 +21,7 @@ export class StreamedHttpResourceProvider implements StreamedResourceProvider {
 
         https.get(requestOptions, (response) => {
           response
-            .on('end', () => {fulfill(); })
+            .on('end', () => {fulfill()})
             .on('error', (err: Error) => reject(err))
             .pipe(stream, {end: false});
         }).on('error', (err: Error) => reject(err));

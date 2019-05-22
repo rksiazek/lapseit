@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as FFMpegInstaller from '@ffmpeg-installer/ffmpeg';
 import * as FFMpeg from 'fluent-ffmpeg';
 import { TimelapseJobEntity } from './timelapse-job-entity';
 import { Job } from 'bull';
@@ -18,7 +19,7 @@ export class TimelapseJobService {
     const OUTPUT_DEST: string = 'processed_resources/';
     const outputFilename = job.id + '.mp4';
 
-    const videoConverterApi = FFMpeg();
+    const videoConverterApi = FFMpeg().setFfmpegPath(FFMpegInstaller.path);
 
     // todo: test whether pipe's nested event emitting affects conversion progress
     // todo: make converter`s options customizable via POST request
