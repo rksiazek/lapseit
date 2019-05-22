@@ -46,17 +46,14 @@ export class TimelapseService {
       const job: Job<TimelapseJobEntity> = await this
         .queueService
         .getJob(jobId)
-        .then((foundJob: Job<TimelapseJobEntity>) => foundJob,
-          reason => {
-            reject(reason);
-            return null;
-          });
-      const jobState: string = await job.getState().then((jobStatus: JobStatus) => jobStatus);
-      const jobSerialized = job.toJSON();
+        .then((foundJob: Job<TimelapseJobEntity>) => foundJob);
 
       if (job.id == null) {
         reject('A job with specified ID does not exist');
       }
+
+      const jobState: string = await job.getState().then((jobStatus: JobStatus) => jobStatus);
+      const jobSerialized = job.toJSON();
 
       resolve({
         status: jobState,
