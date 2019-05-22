@@ -19,9 +19,7 @@ export class TimelapseService {
         const enqueuedJob: Job<TimelapseJobEntity> = await this
           .queueService
           .addJob(timelapseJobDataObject)
-          .then(
-          (job: Job<TimelapseJobEntity>) => job,
-        );
+          .then((job: Job<TimelapseJobEntity>) => job);
 
         if (enqueuedJob === null) {
           reject('Could not create the job');
@@ -48,7 +46,7 @@ export class TimelapseService {
         .getJob(jobId)
         .then((foundJob: Job<TimelapseJobEntity>) => foundJob);
 
-      if (job.id == null) {
+      if (job == null) {
         reject('A job with specified ID does not exist');
       }
 

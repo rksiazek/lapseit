@@ -12,7 +12,7 @@ export class QueueService implements OnModuleInit {
   }
 
   async getJob(jobId: number): Promise<Job> {
-    return await this.queue.getJob(jobId).then((job: Job) => job);
+    return await this.queue.getJob(jobId);
   }
 
   onModuleInit() {

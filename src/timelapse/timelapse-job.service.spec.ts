@@ -35,15 +35,21 @@ describe('TimelapseJobService', () => {
 
   describe('streamedConversion', () => {
     it('should call the provided done callback with a output filename as the result arg, after the succeeded processing',
-      () => {
-        const onCompleteCb = jest.fn();
+      async (done) => {
+        const fakeFfmpegCommand: FFMpeg.FfmpegCommand = FFMpeg();
 
-        service.streamedConversion(job, onCompleteCb, null);
+        Sinon.stub(fakeFfmpegCommand, 'run').callsFake((...args: unknown[]) => {
+          onCompleteCb(null, job.id + '.mp4');
+          return {};
+        });
 
-        onCompleteCb.mockImplementation(() => {
+        const onCompleteCb = jest.fn((err, res) => {
           expect(onCompleteCb).toHaveBeenCalledTimes(1);
           expect(onCompleteCb).toHaveBeenCalledWith(null, job.id + '.mp4');
+          done();
         });
+
+        service.streamedConversion(job, onCompleteCb, null, fakeFfmpegCommand);
       });
 
     it('should call the provided done callback with a Error as the result arg, after the failed processing',
