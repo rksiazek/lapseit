@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimelapseService } from './timelapse.service';
 import { QueueService } from './queue.service';
-import { MyJob as Job } from './__mocks__/job';
-import { TimelapseRequestTemplate } from './timelapse-request.dto';
-import { TimelapseResponseTemplate } from './timelapse-response.dto';
+import { MyJob as Job } from '../entities/__mocks__/job';
+import { TimelapseRequestTemplate } from '../dto/timelapse-request.dto';
+import { TimelapseResponseTemplate } from '../dto/timelapse-response.dto';
 import { JobStatus } from 'bull';
 import * as Sinon from 'sinon';
 import * as fs from 'fs';
@@ -12,7 +12,7 @@ import { ReadStream } from 'fs';
 import {PassThrough} from 'stream';
 
 jest.mock('./queue.service');
-jest.mock('../services/streamed-http-resource-provider');
+jest.mock('./streamed-resource-provider/streamed-http-resource-provider');
 jest.mock('fs');
 
 describe('TimelapseService', () => {

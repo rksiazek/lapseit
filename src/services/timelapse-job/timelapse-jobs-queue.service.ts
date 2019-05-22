@@ -4,7 +4,7 @@ import {
 } from 'nest-bull';
 import { TimelapseJobService} from './timelapse-job.service';
 import { Job, DoneCallback } from 'bull';
-import { TimelapseJobEntity } from './timelapse-job-entity';
+import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
 
 @Queue()
 export class TimelapseJobsQueueService {

@@ -3,7 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { TimelapseModule } from './timelapse/timelapse.module';
+import { TimelapseModule } from './modules/timelapse.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

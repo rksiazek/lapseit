@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { QueueService } from './queue.service';
 import {BullModule, getQueueToken} from 'nest-bull';
 import * as Sinon from 'sinon';
-import {MyJob as Job} from './__mocks__/job';
+import {MyJob as Job} from '../entities/__mocks__/job';
 import {Queue} from 'bull';
 
 describe('QueueService', () => {

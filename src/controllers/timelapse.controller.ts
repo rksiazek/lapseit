@@ -9,8 +9,9 @@ import {
   HttpStatus,
   Headers, Res,
 } from '@nestjs/common';
-import { TimelapseRequestTemplate} from './timelapse-request.dto';
-import {TimelapseService} from './timelapse.service';
+import { TimelapseRequestTemplate} from '../dto/timelapse-request.dto';
+import { TimelapseService } from '../services/timelapse.service';
+import { Readable } from 'stream';
 
 @Controller('timelapse')
 export class TimelapseController {
@@ -51,14 +52,18 @@ export class TimelapseController {
   @Get(':resourceName')
   async sendProcessedResource(@Param('resourceName') resourceName: string, @Res() response) {
     const timelapseJobId: number = parseInt(resourceName.slice(0, resourceName.indexOf('.')), 10);
+    let resultStream: Readable;
 
     try {
-      response.type('video/mp4').send(this.timelapseService.getTimelapseStream(timelapseJobId));
+      resultStream = this.timelapseService.getTimelapseStream(timelapseJobId);
     } catch (e) {
-      response.send(new HttpException({
+      return response.send(new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'A timelapse with supplied identifier were not found.',
+        error: 'A timelapse with supplied name were not found.',
       }, 404));
     }
+
+    response.type('video/mp4').send(resultStream);
+    return response.status(200);
   }
 }

@@ -1,4 +1,4 @@
-import { StreamedResourceProvider } from '../interfaces/streamed-resource-provider';
+import { StreamedResourceProvider } from '../../interfaces/streamed-resource-provider';
 import { PassThrough, Writable } from 'stream';
 import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';

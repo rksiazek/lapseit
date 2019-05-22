@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as FFMpegInstaller from '@ffmpeg-installer/ffmpeg';
 import * as FFMpeg from 'fluent-ffmpeg';
-import { TimelapseJobEntity } from './timelapse-job-entity';
+import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
 import { Job } from 'bull';
-import { StreamedHttpResourceProvider } from '../services/streamed-http-resource-provider';
-import { StreamedFsResourceProvider } from '../services/streamed-fs-resource-provider';
+import { StreamedHttpResourceProvider } from '../streamed-resource-provider/streamed-http-resource-provider';
+import { StreamedFsResourceProvider } from '../streamed-resource-provider/streamed-fs-resource-provider';
 
 @Injectable()
 export class TimelapseJobService {

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimelapseJobsQueueService } from './timelapse-jobs-queue.service';
 import { TimelapseJobService } from './timelapse-job.service';
-import { MyJob as Job } from './__mocks__/job';
-import { TimelapseJobEntity } from './timelapse-job-entity';
+import { MyJob as Job } from '../../entities/__mocks__/job';
+import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
 
 jest.mock('./timelapse-job.service');
 

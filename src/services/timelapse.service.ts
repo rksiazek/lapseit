@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { QueueService } from './queue.service';
-import { TimelapseRequestTemplate } from './timelapse-request.dto';
-import { TimelapseResponseTemplate } from './timelapse-response.dto';
-import { TimelapseJobEntity } from './timelapse-job-entity';
+import { TimelapseRequestTemplate } from '../dto/timelapse-request.dto';
+import { TimelapseResponseTemplate } from '../dto/timelapse-response.dto';
+import { TimelapseJobEntity } from '../entities/timelapse-job-entity';
 import { Job, JobStatus } from 'bull';
 import * as fs from 'fs';
 import { Readable } from 'stream';
@@ -22,7 +22,7 @@ export class TimelapseService {
           .then((job: Job<TimelapseJobEntity>) => job);
 
         if (enqueuedJob === null) {
-          reject('Could not create the job');
+          return reject('Could not create the job');
         }
 
         timelapseJobDataObject.statusPoolLink = 'http://' + moduleBaseEndpoint + '/timelapse/status/' + enqueuedJob.id;
@@ -47,7 +47,7 @@ export class TimelapseService {
         .then((foundJob: Job<TimelapseJobEntity>) => foundJob);
 
       if (job == null) {
-        reject('A job with specified ID does not exist');
+        return reject('A job with specified ID does not exist');
       }
 
       const jobState: string = await job.getState().then((jobStatus: JobStatus) => jobStatus);

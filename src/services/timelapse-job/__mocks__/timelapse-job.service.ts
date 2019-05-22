@@ -1,4 +1,4 @@
-import { TimelapseJobEntity } from '../timelapse-job-entity';
+import { TimelapseJobEntity } from '../../../entities/timelapse-job-entity';
 import * as Bull from 'bull';
 
 export class TimelapseJobService {

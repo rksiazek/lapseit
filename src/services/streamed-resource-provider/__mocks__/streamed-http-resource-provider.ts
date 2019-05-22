@@ -1,9 +1,9 @@
-import { StreamedResourceProvider } from '../../interfaces/streamed-resource-provider';
+import { StreamedResourceProvider } from '../../../interfaces/streamed-resource-provider';
 import { PassThrough, Writable } from 'stream';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class StreamedFsResourceProvider implements StreamedResourceProvider {
+export class StreamedHttpResourceProvider implements StreamedResourceProvider {
   pullResourcesPipe(resources: string[]): PassThrough {
     const stream: PassThrough = new PassThrough();
 

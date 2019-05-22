@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimelapseController } from './timelapse.controller';
-import { TimelapseService } from './timelapse.service';
+import { TimelapseService } from '../services/timelapse.service';
 
-jest.mock('./timelapse.service');
+jest.mock('../services/timelapse.service');
 
 describe('Timelapse Controller', () => {
   let controller: TimelapseController;

@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MyJob as Job } from './__mocks__/job';
-import { TimelapseJobEntity } from './timelapse-job-entity';
+import { MyJob as Job } from '../../entities/__mocks__/job';
+import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
 import { TimelapseJobService } from './timelapse-job.service';
-import { StreamedResourceProvider } from '../interfaces/streamed-resource-provider';
-import { StreamedHttpResourceProvider } from '../services/streamed-http-resource-provider';
-import { StreamedFsResourceProvider } from '../services/streamed-fs-resource-provider';
+import { StreamedResourceProvider } from '../../interfaces/streamed-resource-provider';
+import { StreamedHttpResourceProvider } from '../streamed-resource-provider/streamed-http-resource-provider';
+import { StreamedFsResourceProvider } from '../streamed-resource-provider/streamed-fs-resource-provider';
 import * as FFMpeg from 'fluent-ffmpeg';
 import * as Sinon from 'sinon';
 
-jest.mock('../services/streamed-http-resource-provider');
-jest.mock('../services/streamed-fs-resource-provider');
+jest.mock('../streamed-resource-provider/streamed-http-resource-provider');
+jest.mock('../streamed-resource-provider/streamed-fs-resource-provider');
 
 describe('TimelapseJobService', () => {
   const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));

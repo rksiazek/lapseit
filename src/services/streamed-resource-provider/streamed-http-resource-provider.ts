@@ -1,4 +1,4 @@
-import { StreamedResourceProvider } from '../interfaces/streamed-resource-provider';
+import { StreamedResourceProvider } from '../../interfaces/streamed-resource-provider';
 import { PassThrough, Writable } from 'stream';
 import * as url from 'url';
 import * as https from 'https';
