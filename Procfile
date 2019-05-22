@@ -1,1 +1,1 @@
-web: npm run prestart:prod start:prod
+web: npm run start
