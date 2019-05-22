@@ -50,6 +50,7 @@ describe('TimelapseJobService', () => {
       () => {
         Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
           FFMpeg().emit('error', [new Error('testError'), null]);
+          return {};
         });
 
         const onCompleteCb = jest.fn();
@@ -66,6 +67,7 @@ describe('TimelapseJobService', () => {
       () => {
         Sinon.stub(FFMpeg(), 'run').callsFake((...args: unknown[]) => {
           FFMpeg().emit('progress', [77]);
+          return {};
         });
 
         const onProgressCb = jest.fn();

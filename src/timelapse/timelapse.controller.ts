@@ -49,10 +49,10 @@ export class TimelapseController {
     try {
       response.type('video/mp4').send(this.timelapseService.getTimelapseStream(timelapseJobId));
     } catch (e) {
-        response.send(new HttpException({
-          status: HttpStatus.NOT_FOUND,
-          error: 'A timelapse with supplied identifier were not found.',
-        }, 404));
+      response.send(new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: 'A timelapse with supplied identifier were not found.',
+      }, 404));
     }
   }
 }
