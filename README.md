@@ -6,14 +6,6 @@
 
 NodeJS based web service application, providing handy solution for generation of timelapses.
 
----
-## To do:
-* [x] Configure CI
-* [ ] Finish tests
-* [ ] Implement fallback strategy to resource pull failure
-* [ ] Add basic auth (BA) for processed resources access
-* [ ] Add service uploading output stream from converter to remote server
-
 ## Getting Started
 
 To run this application on your own you'll have to clone this repository, install dependencies declared in package.json and finally run application by executing 'start' script:
@@ -78,6 +70,13 @@ Output:
   "outputResourceUrl": "string", -> link to the output resource (timelapse video)
  }
 ```
+
+## To do:
+* [x] Configure CI
+* [ ] Finish tests
+* [ ] Implement fallback strategy to resource pull failure
+* [ ] Add basic auth (BA) for processed resources access
+* [ ] Add service uploading output stream from converter to remote server
 
 ## Built With
 
