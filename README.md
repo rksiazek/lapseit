@@ -1,5 +1,5 @@
 # Lapse It! 
-[![Build Status](https://travis-ci.com/rksiazek/image-processing-server.svg?token=7ugfFzCwMxAbmLp4zBPs&branch=junk/ci)](https://travis-ci.com/rksiazek/image-processing-server) 
+[![Build Status](https://travis-ci.com/rksiazek/lapseit.svg?branch=master)](https://travis-ci.com/rksiazek/lapseit)
 ![Dependencies](https://david-dm.org/rksiazek/lapseit.svg) 
 ![Issues](https://img.shields.io/github/issues/rksiazek/lapseit.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
