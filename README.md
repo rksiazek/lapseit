@@ -6,26 +6,77 @@
 
 NodeJS based web service application, providing handy solution for generation of timelapses.
 
+---
+## To do:
+* [x] Configure CI
+* [ ] Finish tests
+* [ ] Implement fallback strategy to resource pull failure
+* [ ] Add basic auth (BA) for processed resources access
+* [ ] Add service uploading output stream from converter to remote server
+
 ## Getting Started
 
-To run this application on your own, just clone this repository and execute the command:
-```
-npm run start
+To run this application on your own you'll have to clone this repository, install dependencies declared in package.json and finally run application by executing 'start' script:
+
+```sh
+$ git clone https://github.com/rksiazek/lapseit.git project
+$ cd project
+$ npm install
+$ npm run start
 ```
 
 ## Running the tests
-To execute test procedures, run following command:
+To execute all spec's tests procedures with built in Jest library, run following command:
 
 ```sh
-npm test
+$ npm test
 ```
 
-
-### Coding style tests
+## Coding style tests
 Coding style tests ensure that developers keep following good and centralized practices regarding code styling.
 
 ```
-npm lint
+$ npm lint
+```
+
+## API endpoints description
+
+### POST /timelapse
+Input:
+```
+{
+  "frameSources": "string[]", -> an array of links of remote images
+}
+```
+
+Output:
+```
+{
+  "status": "failed | waiting | stuck | active | completed",, -> job processing status
+  "startedOn": "number",  -> unix time describing when job was started
+  "finishedOn": "number", -> unix time describing when job was finished
+  "statusPoolLink": "string", -> link that should be used for pooling the state of the job
+  "outputResourceUrl": "string", -> link to the output resource (timelapse video)
+ }
+ ```
+ 
+### GET /timelapse/{filename}
+Input: Generated timelapse filename
+
+Output: Http stream containing target video
+
+### GET /timelapse/status/{id}
+Input: Timelapse job id
+
+Output: 
+```
+{
+  "status": "failed | waiting | stuck | active | completed",, -> job processing status
+  "startedOn": "number",  -> unix time describing when job was started
+  "finishedOn": "number", -> unix time describing when job was finished
+  "statusPoolLink": "string", -> link that should be used for pooling the state of the job
+  "outputResourceUrl": "string", -> link to the output resource (timelapse video)
+ }
 ```
 
 ## Built With
