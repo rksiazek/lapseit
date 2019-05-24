@@ -63,7 +63,7 @@ Input: Timelapse job id
 Output: 
 ```
 {
-  "status": "failed | waiting | stuck | active | completed",, -> job processing status
+  "status": "failed | waiting | stuck | active | completed", -> job processing status
   "startedOn": "number",  -> unix time describing when job was started
   "finishedOn": "number", -> unix time describing when job was finished
   "statusPoolLink": "string", -> link that should be used for pooling the state of the job
@@ -73,7 +73,7 @@ Output:
 
 ## To do:
 * [x] Configure CI
-* [ ] Finish tests
+* [ ] Finish unimplemented tests
 * [ ] Implement fallback strategy to resource pull failure
 * [ ] Add basic auth (BA) for processed resources access
 * [ ] Add service uploading output stream from converter to remote server
