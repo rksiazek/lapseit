@@ -8,8 +8,22 @@ import { StreamedFsResourceProvider } from '../services/streamed-resource-provid
 import { QueueService } from '../services/queue.service';
 import { TimelapseService } from '../services/timelapse.service';
 
+const REDIS_HOST: string = process.env.REDIS_HOST || '127.0.0.1';
+const REDIS_PORT: number = Number(process.env.REDIS_PORT) || 6379;
+const REDIS_PASSWORD: string = process.env.REDIS_PASSWORD || '';
+
 @Module({
-  imports: [BullModule.forRoot({})],
+  imports: [
+    BullModule.forRoot({
+      options: {
+        redis: {
+          host: REDIS_HOST,
+          port: REDIS_PORT,
+          password: REDIS_PASSWORD,
+        },
+      },
+    }),
+  ],
   controllers: [TimelapseController],
   providers: [
     TimelapseJobService,
