@@ -45,7 +45,7 @@ export class MyJob<T> implements Bull.Job {
   }
 
   progress(value: any): Promise<void> {
-    return new Promise<void>(() => {this.progressPerc = value; });
+    return undefined;
   }
 
   promote(): Promise<void> {
