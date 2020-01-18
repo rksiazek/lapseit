@@ -6,6 +6,7 @@ import { TimelapseJobService} from './timelapse-job.service';
 import { Job, DoneCallback, JobStatus } from 'bull';
 import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
 import Axios from 'axios';
+import { Logger } from '@nestjs/common';
 
 @Queue()
 export class TimelapseJobsQueueService {
@@ -36,7 +37,7 @@ export class TimelapseJobsQueueService {
                     notificationsCustomData: jobSerialized.data.notificationsCustomData,
                 })
                   .catch((err) => {
-                      console.error(err);
+                      Logger.error(err);
                   });
             });
         });
@@ -60,7 +61,7 @@ export class TimelapseJobsQueueService {
                     notificationsCustomData: jobSerialized.data.notificationsCustomData,
                 })
                   .catch((err) => {
-                      console.error(err);
+                      Logger.error(err);
                   });
             });
         });
