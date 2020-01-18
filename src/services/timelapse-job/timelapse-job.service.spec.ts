@@ -7,12 +7,13 @@ import { StreamedHttpResourceProvider } from '../streamed-resource-provider/stre
 import { StreamedFsResourceProvider } from '../streamed-resource-provider/streamed-fs-resource-provider';
 import * as FFMpeg from 'fluent-ffmpeg';
 import * as Sinon from 'sinon';
+import { DoneCallback } from 'bull';
 
 jest.mock('../streamed-resource-provider/streamed-http-resource-provider');
 jest.mock('../streamed-resource-provider/streamed-fs-resource-provider');
 
 describe('TimelapseJobService', () => {
-  const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([]));
+  const job: Job<TimelapseJobEntity> = new Job<TimelapseJobEntity>(new TimelapseJobEntity([], '', ''));
   let service: TimelapseJobService;
   let streamedHttpResourceProvider: StreamedHttpResourceProvider;
   let streamedFsResourceProvider: StreamedFsResourceProvider;
@@ -49,7 +50,7 @@ describe('TimelapseJobService', () => {
           done();
         });
 
-        service.streamedConversion(job, onCompleteCb, null, fakeFfmpegCommand);
+        service.streamedConversion(job, onCompleteCb, null, null, fakeFfmpegCommand);
       });
 
     it('should call the provided done callback with a Error as the result arg, after the failed processing',
@@ -66,13 +67,18 @@ describe('TimelapseJobService', () => {
           return {};
         });
 
-        service.streamedConversion(job, onCompleteCb, null, fakeFfmpegCommand);
+        service.streamedConversion(job, onCompleteCb, null, null, fakeFfmpegCommand);
       });
 
     it('should call the provided progress callback with progress percentage as the arg, during the processing',
       async (done) => {
         const fakeFfmpegCommand: FFMpeg.FfmpegCommand = FFMpeg();
         const onCompleteCb = jest.fn();
+        const onCompleteCb2 = jest.fn(
+          (jobArg: Job<TimelapseJobEntity>, doneCb: DoneCallback, error: Error | null, value: any) => {
+            doneCb(error, value);
+          });
+
         const onProgressCb = jest.fn((val) => {
           expect(onProgressCb).toHaveBeenCalledTimes(1);
           expect(onProgressCb).toHaveBeenCalledWith(77);
@@ -84,7 +90,7 @@ describe('TimelapseJobService', () => {
           return {};
         });
 
-        service.streamedConversion(job, onCompleteCb, onProgressCb, fakeFfmpegCommand);
+        service.streamedConversion(job, onCompleteCb, onCompleteCb2, onProgressCb, fakeFfmpegCommand);
       });
   });
 });
