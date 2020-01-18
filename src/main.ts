@@ -15,6 +15,10 @@ async function bootstrap() {
     root: __dirname + '/processed_resources',
   });
 
-  await app.listen(3000);
+  app.enableCors();
+
+  await app.listen(process.env.PORT || 3000, '0.0.0.0', function() {
+    console.log('Listening on port:' + process.env.PORT || 3000);
+  });
 }
 bootstrap().then();
