@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import * as FFMpegInstaller from '@ffmpeg-installer/ffmpeg';
 import * as FFMpeg from 'fluent-ffmpeg';
 import { TimelapseJobEntity } from '../../entities/timelapse-job-entity';
-import { Job } from 'bull';
+import { DoneCallback, Job, JobStatus } from 'bull';
 import { StreamedHttpResourceProvider } from '../streamed-resource-provider/streamed-http-resource-provider';
 import { StreamedFsResourceProvider } from '../streamed-resource-provider/streamed-fs-resource-provider';
+import Axios from 'axios';
 
 @Injectable()
 export class TimelapseJobService {
@@ -13,6 +14,7 @@ export class TimelapseJobService {
 
   streamedConversion(job: Job<TimelapseJobEntity>,
                      onCompleteCb: (error: Error, resultData: any) => void,
+                     onCompleteCb2: (job: Job<TimelapseJobEntity>, doneCb: DoneCallback, error: Error | null, value: any) => void,
                      onProgressCb?: (job: Job<TimelapseJobEntity>, percentageProgress: number) => void,
                      videoConverterApi?: FFMpeg.FfmpegCommand): void {
 
@@ -37,14 +39,15 @@ export class TimelapseJobService {
       .outputFps(30)
       .noAudio()
       .on('end', () => {
-        onCompleteCb(null, outputFilename);
+        onCompleteCb2(job, onCompleteCb, null, outputFilename);
       })
-      .on('progress', (progress: any) =>
-        onProgressCb(job, 100 * progress.frames / job.data.frameSources.length),
-      )
+      .on('progress', (progress: any) => {
+        const percentageProgress = 100 * progress.frames / job.data.frameSources.length;
+        onProgressCb(job, percentageProgress);
+      })
       .on('error', (err: string) => {
-        onCompleteCb(
-            new Error(err), null,
+        onCompleteCb2(
+            job, onCompleteCb, new Error(err), null,
         );
         },
       )

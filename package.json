@@ -36,7 +36,8 @@
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
     "rxjs": "6.5.3",
-    "sinon": "^7.5.0"
+    "sinon": "^7.5.0",
+    "axios": "^0.19.1"
   },
   "devDependencies": {
     "@nestjs/testing": "6.10.5",

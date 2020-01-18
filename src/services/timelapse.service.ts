@@ -14,7 +14,12 @@ export class TimelapseService {
   async createTimelapseProcessingJob(timelapseJobRequest: TimelapseRequestTemplate, moduleBaseEndpoint: string):
     Promise<TimelapseResponseTemplate> {
       return new Promise<TimelapseResponseTemplate>(async (resolve, reject) => {
-        const timelapseJobDataObject: TimelapseJobEntity = new TimelapseJobEntity(timelapseJobRequest.frameSources);
+        const timelapseJobDataObject: TimelapseJobEntity =
+          new TimelapseJobEntity(
+            timelapseJobRequest.frameSources,
+            timelapseJobRequest.notificationsUrl,
+            timelapseJobRequest.notificationsCustomData,
+          );
 
         const enqueuedJob: Job<TimelapseJobEntity> = await this
           .queueService
@@ -27,6 +32,9 @@ export class TimelapseService {
 
         timelapseJobDataObject.statusPoolLink = 'http://' + moduleBaseEndpoint + '/timelapse/status/' + enqueuedJob.id;
         timelapseJobDataObject.outputResourceUrl = 'http://' + moduleBaseEndpoint + '/timelapse/' + enqueuedJob.id + '.mp4';
+
+        timelapseJobDataObject.notificationsUrl = timelapseJobRequest.notificationsUrl;
+        timelapseJobDataObject.notificationsCustomData = timelapseJobRequest.notificationsCustomData;
         await enqueuedJob.update(timelapseJobDataObject);
 
         resolve({
@@ -35,6 +43,8 @@ export class TimelapseService {
           finishedOn: enqueuedJob.finishedOn,
           statusPoolLink: timelapseJobDataObject.statusPoolLink,
           outputResourceUrl: timelapseJobDataObject.outputResourceUrl,
+          notificationsUrl: timelapseJobDataObject.notificationsUrl,
+          notificationsCustomData: timelapseJobDataObject.notificationsCustomData,
         } as TimelapseResponseTemplate);
       });
   }
@@ -60,6 +70,8 @@ export class TimelapseService {
         finishedOn: jobSerialized.finishedOn,
         statusPoolLink: jobSerialized.data.statusPoolLink,
         outputResourceUrl: jobSerialized.data.outputResourceUrl,
+        notificationsUrl: jobSerialized.data.notificationsUrl,
+        notificationsCustomData: jobSerialized.data.notificationsCustomData,
       } as TimelapseResponseTemplate);
     });
   }

@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from 'nest-bull';
-import { DoneCallback, Job, Queue } from 'bull';
+import { DoneCallback, Job, JobStatus, Queue } from 'bull';
+import Axios from 'axios';
 
 @Injectable()
 export class QueueService implements OnModuleInit {
